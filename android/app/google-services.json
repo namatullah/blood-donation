@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "217959387432",
+    "project_id": "test-app-d2af6",
+    "storage_bucket": "test-app-d2af6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:217959387432:android:5d0cbf4d927310e889001d",
+        "android_client_info": {
+          "package_name": "com.example.todo_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAUE6SIrn-umotM2u2LiM10WNntbKORlV8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:217959387432:android:67d5b40b9f356efd89001d",
+        "android_client_info": {
+          "package_name": "com.nuyan.coffee_card"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAUE6SIrn-umotM2u2LiM10WNntbKORlV8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
