@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Post extends StatefulWidget {
   const Post({super.key});
@@ -9,13 +12,19 @@ class Post extends StatefulWidget {
 
 class _PostState extends State<Post> {
   final List<Map<String, String>> posts = [];
-  void _addPost(String title, String description) {
-    setState(() {
-      posts.add({'title': title, 'description': description});
-    });
+  Future<void> _addPost(String title, String description, String uid) async {
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('posts')
+        .add({
+          'title': title,
+          'description': description,
+          'createdAt': FieldValue.serverTimestamp(),
+        });
   }
 
-  void _showAddPostDialog() {
+  void _showAddPostDialog(BuildContext context, String uid) {
     final titleController = TextEditingController();
     final descriptionController = TextEditingController();
 
@@ -45,9 +54,13 @@ class _PostState extends State<Post> {
               child: const Text('Cancel'),
             ),
 
-            TextButton(
-              onPressed: () {
-                _addPost(titleController.text, descriptionController.text);
+            ElevatedButton(
+              onPressed: () async {
+                await _addPost(
+                  titleController.text,
+                  descriptionController.text,
+                  uid,
+                );
                 Navigator.pop(context);
               },
               child: const Text('Add'),
@@ -60,25 +73,47 @@ class _PostState extends State<Post> {
 
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<User?>(context);
+    if (user == null) {
+      return const Scaffold(body: Center(child: Text('Please login')));
+    }
     return Scaffold(
       appBar: AppBar(title: const Text('Posts')),
-      body: posts.isEmpty
-          ? const Center(child: Text('No posts yet'))
-          : ListView.builder(
-              itemCount: posts.length,
-              itemBuilder: (context, index) {
-                final post = posts[index];
-                return Card(
-                  margin: const EdgeInsets.all(10),
-                  child: ListTile(
-                    title: Text(post['title'] ?? ''),
-                    subtitle: Text(post['description'] ?? ''),
-                  ),
-                );
-              },
-            ),
+      body: StreamBuilder(
+        stream: FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .collection('posts')
+            .orderBy('createdAt', descending: true)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          final posts = snapshot.data!.docs;
+
+          if (posts.isEmpty) {
+            return const Center(child: Text("No posts yet"));
+          }
+          return ListView.builder(
+            itemCount: posts.length,
+            itemBuilder: (context, index) {
+              final data = posts[index].data() as Map<String, dynamic>;
+
+              return ListTile(
+                title: Text(data['title'] ?? ''),
+                subtitle: Text(data['description'] ?? ''),
+              );
+            },
+          );
+        },
+      ),
+
       floatingActionButton: FloatingActionButton(
-        onPressed: _showAddPostDialog,
+        onPressed: () {
+          _showAddPostDialog(context, user.uid);
+        },
         child: const Icon(Icons.add),
       ),
     );
