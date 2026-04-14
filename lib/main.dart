@@ -1,16 +1,17 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:todo_app/constants/app_colors.dart';
-import 'package:todo_app/providers/auth_provider.dart' as local_auth;
-import 'package:todo_app/screens/auth_wrapper.dart';
-import 'package:todo_app/services/database_service.dart';
 import 'firebase_options.dart';
+import 'package:todo_app/providers/auth_provider.dart' as local_auth;
+import 'package:todo_app/services/database_service.dart';
+import 'package:todo_app/screens/auth_wrapper.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   runApp(const MyApp());
 }
 
@@ -31,8 +32,8 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
-        title: 'Todo List',
         debugShowCheckedModeBanner: false,
+
         theme: ThemeData(
           primarySwatch: Colors.blue,
           useMaterial3: true,
@@ -82,7 +83,8 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
-        home: AuthWrapper(),
+
+        home: const AuthWrapper(),
       ),
     );
   }
