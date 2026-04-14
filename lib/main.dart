@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:todo_app/constants/app_colors.dart';
 import 'package:todo_app/providers/auth_provider.dart' as local_auth;
 import 'package:todo_app/screens/auth_wrapper.dart';
+import 'package:todo_app/services/database_service.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -20,12 +21,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        //Auth provider to handle Sign In/Out logic
         ChangeNotifierProvider(create: (_) => local_auth.AuthProvider()),
-        // Strem of user auth state changes
         StreamProvider<User?>(
           create: (context) => context.read<local_auth.AuthProvider>().user,
           initialData: null,
+        ),
+        ProxyProvider<User?, DatabaseService>(
+          update: (_, user, _) => DatabaseService(uid: user?.uid),
         ),
       ],
       child: MaterialApp(
